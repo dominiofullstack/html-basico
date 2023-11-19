@@ -1,0 +1,65 @@
+* {
+	margin: 0;
+	padding: 0;
+	font-family: sans-serif;
+	box-sizing: border-box;
+}
+
+header {
+	background: #ffbc81;
+	text-align: center;
+	padding: 100px;
+}
+
+main {
+	padding: 25px 200px;
+}
+
+main .titulo {
+	margin-bottom: 25px;
+}
+
+.cursos {
+	display: flex;
+	justify-content: space-between;
+	list-style-type: none;
+}
+
+.cursos li {
+	width: 170px;
+	text-align: center;
+	padding: 10px;
+	border-radius: 5px;
+	background: #bfffbf;
+}
+
+.cursos li:hover {
+	background: #93ff93;
+}
+
+.cursos a {
+	display: block;
+	text-decoration: none;
+	color: black;
+}
+
+.cursos .banner {
+	width: 150px;
+	height: 150px;
+	display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.cursos .banner img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+footer {
+	margin-top: 50px;
+	text-align: center;
+	background: #a5a3ff;
+	padding: 25px;
+}
