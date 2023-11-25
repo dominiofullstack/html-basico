@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>O Lobo e a Ovelha</title>
+	<style type="text/css">
+		* {
+			margin: 0;
+			padding: 0;
+			font-family: sans-serif;
+			text-transform: uppercase;
+			font-weight: bold;
+			box-sizing: border-box;
+		}
+		main {
+			width: 100%;
+			display: flex;
+		}
+		main div {
+			width: 33.3vw;
+			height: 100vh;
+		}
+		.rio div {
+			width: 25%;
+			height: 100%;
+		}
+		.esquerdo, .direito {
+			background: green;
+			padding: 10px;
+		}
+		.rio {
+			background: blue;
+			display: flex;
+			justify-content: space-between;
+		}
+		.margem-esquerda, .margem-direita {
+			background: lightblue;
+			padding: 10px 0;
+			text-align: center;
+		}
+		.personagem {
+			cursor: pointer;
+			width: 100px;
+			height: 100px;
+			display: block;
+		}
+	</style>
+</head>
+<body>
+	<main>
+		<div class="esquerdo">
+			
+		</div>
+		<div class="rio">
+			<div class="margem-esquerda">
+				
+			</div>
+			<div class="margem-direita">
+				
+			</div>
+		</div>
+		<div class="direito">
+			
+		</div>
+	</main>
+
+	<script type="text/javascript">
+		var LADO_ESQUERDO = 0;
+		var LADO_DIREITO = 1;
+
+		var lobo = {id: 1, nome: 'Lobo', lado: LADO_ESQUERDO, embarcado: false};
+		var ovelha = {id: 2, nome: 'Ovelha', lado: LADO_ESQUERDO, embarcado: false};
+		var couve = {id: 3, nome: 'Couve', lado: LADO_ESQUERDO, embarcado: false};
+		var barco = {id: 4, nome: 'Barco', lado: LADO_ESQUERDO, embarcado: true};
+
+		var personagens = [lobo, ovelha, couve, barco];
+
+		function resetGame() {
+			for (var i = 0; i < personagens.length; i++) {
+				var personagem = personagens[i];
+				if (personagem.id != barco.id) {
+					personagem.embarcado = false;
+				}
+				personagem.lado = LADO_ESQUERDO;
+			}
+			renderizarPersonagens();
+		}
+
+		function renderizarPersonagens() {
+			limpaCenario();
+			for (var i = 0; i < personagens.length; i++) {
+				var personagem = personagens[i];
+				if (personagem.lado == LADO_ESQUERDO) {
+					adicionaEsquerda(personagem);
+				} else {
+					adicionaDireita(personagem);
+				}
+			}
+		}
+
+		function limpaCenario() {
+			var seletores = ['margem-direita', 'direito', 'margem-esquerda', 'esquerdo'];
+			for (var i = 0; i < seletores.length; i++) {
+				var elemento = document.getElementsByClassName(seletores[i])[0];
+				elemento.innerHTML = "";
+			}
+		}
+
+		function adicionaDireita(personagem) {
+			var seletor = personagem.embarcado ? 'margem-direita' : 'direito';
+			var lado = document.getElementsByClassName(seletor)[0];
+			lado.appendChild(criaElemento('img', personagem));
+		}
+
+		function adicionaEsquerda(personagem) {
+			var seletor = personagem.embarcado ? 'margem-esquerda' : 'esquerdo';
+			var lado = document.getElementsByClassName(seletor)[0];
+			lado.appendChild(criaElemento('img', personagem));
+		}
+
+		function criaElemento(elemento, personagem) {
+			var element = document.createElement(elemento);
+			element.setAttribute("src", "./img/" + personagem.nome + ".png");
+			if (personagem.id == barco.id) {
+				element.setAttribute("onclick", "atravessar()")
+			} else {
+				element.setAttribute("onclick", "embarcarById("+personagem.id+")")
+			}
+			element.classList.add("personagem");
+			return element;
+		}
+
+		function embarcar() {
+			if (possuiPersonagemEmbarcado()) {
+				window.alert("Não pode embarcar mais de um personagem.");
+				return;
+			}
+			var personagensNoLadoDoBarco = getPersonagensNoLadoDoBarco();
+			if (personagensNoLadoDoBarco.length > 0) {
+				var mensagem = "O que você deseja levar?";
+				for (var i = 0; i < personagensNoLadoDoBarco.length; i++) {
+					var personagem = personagensNoLadoDoBarco[i];
+					mensagem += `\nDigite ${personagem.id} para ${personagem.nome}`;
+				}
+				var idPersonagem = window.prompt(mensagem);
+				var personagemExiste = false;
+				for (var i = 0; i < personagensNoLadoDoBarco.length; i++) {
+					var personagem = personagensNoLadoDoBarco[i];
+					if (personagem.id == idPersonagem) {
+						personagemExiste = true;
+					}
+				}
+				if (personagemExiste) {
+					embarcarById(idPersonagem);
+				} else {
+					window.alert("Código inválido.");
+				}
+			} else {
+				window.alert("Não há personagens desse lado.");
+			}
+		}
+
+		function possuiPersonagemEmbarcado() {
+			for (var i = 0; i < personagens.length; i++) {
+				var personagem = personagens[i];
+				if (personagem.embarcado && personagem.id != barco.id) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		function getPersonagensNoLadoDoBarco() {
+			var personagensNoLadoDoBarco = [];
+			for (var i = 0; i < personagens.length; i++) {
+				var personagem = personagens[i];
+				if (personagem.lado == barco.lado && personagem.id != barco.id) {
+					personagensNoLadoDoBarco.push(personagens[i]);
+				}
+			}
+			return personagensNoLadoDoBarco;
+		}
+
+		function atravessar() {
+			for (var i = 0; i < personagens.length; i++) {
+				if (personagens[i].embarcado) {
+					if (personagens[i].lado == LADO_ESQUERDO) {
+						personagens[i].lado = LADO_DIREITO;
+					} else {
+						personagens[i].lado = LADO_ESQUERDO;
+					}
+				}
+			}
+			renderizarPersonagens();
+			validaDerrota();
+		}
+
+		function desembarcar() {
+			for (var i = 0; i < personagens.length; i++) {
+				if (personagens[i].embarcado && personagens[i].id != barco.id) {
+					personagens[i].embarcado = false;
+				}
+			}
+			renderizarPersonagens();
+			validaVitoria();
+		}
+
+		function embarcarById(idPersonagem) {
+			for (var i = 0; i < personagens.length; i++) {
+				if (personagens[i].id == idPersonagem && personagens[i].lado == barco.lado) {
+					if (personagens[i].embarcado == false) {
+						var podeEmbarcar = true;
+						for (var j = 0; j < personagens.length; j++) {
+							if (personagens[j].embarcado && personagens[j].id != barco.id) {
+								podeEmbarcar = false;
+							}
+						}
+						if (podeEmbarcar) {
+							personagens[i].embarcado = true;
+						}
+					} else {
+						personagens[i].embarcado = false;
+						validaVitoria();
+					}
+				}
+			}
+			renderizarPersonagens();
+		}
+
+		function validaVitoria() {
+			var todosAtravessaram = true;
+			for (var i = 0; i < personagens.length; i++) {
+				var personagem = personagens[i];
+				if (personagem.lado == LADO_ESQUERDO) {
+					todosAtravessaram = false;
+				}
+			}
+			if (todosAtravessaram) {
+				window.alert("Parabéns, você conseguiu!");
+				resetGame();
+			}
+		}
+
+		function validaDerrota() {
+			var personagensNaEsquerda = [];
+			var personagensNaDireita = [];
+			for (var i = 0; i < personagens.length; i++) {
+				var personagem = personagens[i];
+				if (personagem.lado == LADO_ESQUERDO) {
+					personagensNaEsquerda.push(personagem);
+				} else {
+					personagensNaDireita.push(personagem);
+				}
+			}
+			if (personagensNaEsquerda.length == 2) {
+				if ((personagensNaEsquerda[0].id == lobo.id && personagensNaEsquerda[1].id == ovelha.id) || 
+					(personagensNaEsquerda[0].id == ovelha.id && personagensNaEsquerda[1].id == lobo.id)) {
+					window.alert("Você perdeu, o lobo comeu a ovelha!");
+					resetGame();
+				} else if ((personagensNaEsquerda[0].id == ovelha.id && personagensNaEsquerda[1].id == couve.id) ||
+					(personagensNaEsquerda[0].id == couve.id && personagensNaEsquerda[1].id == ovelha.id)) {
+					window.alert("Você perdeu, a ovelha comeu a couve!");
+					resetGame();
+				}
+			} else if (personagensNaDireita.length == 2) {
+				if ((personagensNaDireita[0].id == lobo.id && personagensNaDireita[1].id == ovelha.id) || 
+					(personagensNaDireita[0].id == ovelha.id && personagensNaDireita[1].id == lobo.id)) {
+					window.alert("Você perdeu, o lobo comeu a ovelha!");
+					resetGame();
+				} else if ((personagensNaDireita[0].id == ovelha.id && personagensNaDireita[1].id == couve.id) ||
+					(personagensNaDireita[0].id == couve.id && personagensNaDireita[1].id == ovelha.id)) {
+					window.alert("Você perdeu, a ovelha comeu a couve!");
+					resetGame();
+				}
+			}
+		}
+
+		renderizarPersonagens();
+	</script>
+</body>
+</html>
